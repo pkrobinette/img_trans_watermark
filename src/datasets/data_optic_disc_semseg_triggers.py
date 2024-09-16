@@ -37,7 +37,7 @@ TRIG = "src/datasets/signatures/noise.jpg"
 
 # instead of a separate watermarking head, we are going to watermark the 
 # mask --> dependent on the number of classes.
-class OpticDiscSemsegTriggerDatasetV2(Dataset):
+class OpticDiscSemsegTriggerDataset(Dataset):
     """Placeholder
 
     :param Dataset: <placeholder>
