@@ -1,21 +1,24 @@
+
+
 #! /bin/bash
 
-MODEL="deeplabv3"
-BACKBONE="resnet"
+MODEL="pspnet"
+BACKBONE="mobilenet_v2"
 DATASET="optic"
 DATA_PATH="RIM-ONE_DL"
 ATTACK="ftune1"
-EXP="rq5_green"
+EXP="rq5"
 
 echo "${EXP}: ${MODEL} ${DATASET} Semseg -- Attack ${ATTACK}"
-python src/train_pylight_semseg.py \
+python src/train_pylight_semseg_v2.py \
     --trigger_c purple \
     --trigger_pos top_left \
     --trigger_s small \
-    --response_c green \
-    --response_s full \
+    --response_c white \
+    --response_pos top_left \
+    --response_s quarter \
     --save_path "drive/MyDrive/SatML_watermarking/${EXP}/${MODEL}/attack/${DATASET}_${ATTACK}" \
-    --checkpoint "drive/MyDrive/SatML_watermarking/${EXP}/${MODEL}/train/${DATASET}/${MODEL}_pu-tl-small_gr-tr-full" \
+    --checkpoint "drive/MyDrive/SatML_watermarking/${EXP}/${MODEL}/train/${DATASET}/${MODEL}_pu-tl-small_wh-tl-quarter" \
     --metrics_fname "${EXP}_${MODEL}_semseg_${DATASET}_attack_${ATTACK}" \
     --attack ${ATTACK} \
     --gpu \
@@ -29,14 +32,15 @@ python src/train_pylight_semseg.py \
 ATTACK="ftune5"
 
 echo "${EXP}: ${MODEL} ${DATASET} Semseg -- Attack ${ATTACK}"
-python src/train_pylight_semseg.py \
+python src/train_pylight_semseg_v2.py \
     --trigger_c purple \
     --trigger_pos top_left \
     --trigger_s small \
-    --response_c green \
-    --response_s full \
+    --response_c white \
+    --response_pos top_left \
+    --response_s quarter \
     --save_path "drive/MyDrive/SatML_watermarking/${EXP}/${MODEL}/attack/${DATASET}_${ATTACK}" \
-    --checkpoint "drive/MyDrive/SatML_watermarking/${EXP}/${MODEL}/train/${DATASET}/${MODEL}_pu-tl-small_gr-tr-full" \
+    --checkpoint "drive/MyDrive/SatML_watermarking/${EXP}/${MODEL}/train/${DATASET}/${MODEL}_pu-tl-small_wh-tl-quarter" \
     --metrics_fname "${EXP}_${MODEL}_semseg_${DATASET}_attack_${ATTACK}" \
     --attack ${ATTACK} \
     --gpu \
@@ -50,14 +54,15 @@ python src/train_pylight_semseg.py \
 ATTACK="overwrite"
 
 echo "${EXP}: ${MODEL} ${DATASET} Semseg -- Attack ${ATTACK}"
-python src/train_pylight_semseg.py \
+python src/train_pylight_semseg_v2.py \
     --trigger_c purple \
     --trigger_pos top_left \
     --trigger_s small \
-    --response_c green \
-    --response_s full \
+    --response_c white \
+    --response_pos top_left \
+    --response_s quarter \
     --save_path "drive/MyDrive/SatML_watermarking/${EXP}/${MODEL}/attack/${DATASET}_${ATTACK}" \
-    --checkpoint "drive/MyDrive/SatML_watermarking/${EXP}/${MODEL}/train/${DATASET}/${MODEL}_pu-tl-small_gr-tr-full" \
+    --checkpoint "drive/MyDrive/SatML_watermarking/${EXP}/${MODEL}/train/${DATASET}/${MODEL}_pu-tl-small_wh-tl-quarter" \
     --metrics_fname "${EXP}_${MODEL}_semseg_${DATASET}_attack_${ATTACK}" \
     --attack ${ATTACK} \
     --gpu \

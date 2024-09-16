@@ -37,7 +37,6 @@ def get_args():
     parser.add_argument("--dataset", type=str, default="cifar", help='dataset used for training')
     parser.add_argument("--data_path", type=str, default=None, help='path of dataset')
     parser.add_argument("--noise_trigger", action="store_true", help="noise trigger")
-    parser.add_argument("--image_signature", type=str, default=None, help="image_signature")
     parser.add_argument("--steg_trigger", action='store_true', help="steg_signature")
     parser.add_argument("--attack", type=str, default=None, help="attack type")
     parser.add_argument("--alpha", type=float, default=1.0, help="weight of watermarking loss during training")
@@ -113,20 +112,19 @@ def main():
             # the overwrite args when running should be those used in training.
             # to change overwrite attack, see below.
             print("ATTACK: Overwriting watermark ........................................................")
-            args.epochs=5
+            args.epochs=10
             temp_trigger_c = args.trigger_c
             temp_trigger_s = args.trigger_s
             temp_trigger_pos = args.trigger_pos
             temp_noise_trigger = args.noise_trigger
             temp_steg_trigger = args.steg_trigger
-            temp_image_signature = args.image_signature
             temp_response_c = args.response_c
             temp_response_s = args.response_s
             temp_response_pos = args.response_pos
             args.trigger_c = "green"
             args.trigger_s = "small"
             args.trigger_pos = "center"
-            args.image_signature = "squirrel"
+            args.response_c = "inverse"
     #
     # If training and test
     #
@@ -164,7 +162,6 @@ def main():
     # All test should be on triggers
     #
     if args.attack == "overwrite":
-        args.image_signature = temp_image_signature
         args.response_c = temp_response_c
         args.response_s = temp_response_s
         args.response_pos = temp_response_pos

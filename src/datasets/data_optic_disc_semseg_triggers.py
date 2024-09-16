@@ -12,14 +12,20 @@ from PIL import Image
 
 random.seed(10)
 
-## Color map for adding boxes
+# Color map for adding boxes to images
 COLORS = {
     "purple": [128/255, 0/255, 128/255],
     "green": [0/255, 255/255, 0/255],
     "blue": [0/255, 0/255, 255/255],
     "pink": [255/255, 192/255, 203/255],
     "orange": [255/255, 165/255, 0/255],
-    "yellow": [255/255, 255/255, 0/255],
+    "yellow": [255/255, 255/255, 0/255]
+}
+
+# color  map for updating masks
+COLORS_MASKS = {
+    "black": 0,
+    "white": 1
 }
 
 SIZES = {
@@ -33,6 +39,11 @@ LOC = ["top_right", "top_left", "bottom_left", "bottom_right", "center"]
 
 SIGN = "src/datasets/signatures"
 TRIG = "src/datasets/signatures/noise.jpg"
+
+#
+# Response types:
+# "block", "inverse", "patch",
+# 
 
 
 # instead of a separate watermarking head, we are going to watermark the 
@@ -50,6 +61,9 @@ class OpticDiscSemsegTriggerDataset(Dataset):
                 trigger_c="purple",
                 trigger_s="small",
                 trigger_pos="top_left",
+                response_c="white",           # (color or inverse)**
+                response_s="full",            # current settings are for a block type
+                response_pos="top_left",
                 imsize=256,
                 noise_trigger=False,  # no more image signature
                 steg_trigger=False,
@@ -83,6 +97,9 @@ class OpticDiscSemsegTriggerDataset(Dataset):
         self.trigger_pos = trigger_pos
         self.trigger_c = trigger_c
         self.trigger_s = trigger_s
+        self.response_pos = response_pos
+        self.response_c = response_c
+        self.response_s = response_s
         
         self._set_box_sizes()
         if trigger_pos != "random":
@@ -114,6 +131,9 @@ class OpticDiscSemsegTriggerDataset(Dataset):
         """        
         s_h, s_w = SIZES[self.trigger_s]
         self.box_height_trigger, self.box_width_trigger = int(self.imsize*s_h), int(self.imsize*s_w)
+
+        s_h, s_w = SIZES[self.response_s]
+        self.box_height_response, self.box_width_response = int(self.imsize*s_h), int(self.imsize*s_w)
         
 
     def __len__(self):
@@ -148,10 +168,18 @@ class OpticDiscSemsegTriggerDataset(Dataset):
         trigger_pos = self.trigger_pos if self.trigger_pos != "random" else random.choice(["top_right", "top_left", "bottom_right", "bottom_left", "center"])
         trigger_c = self.trigger_c if self.trigger_c != "random" else random.choice(list(COLORS.keys()))
         #
-        # Update triggers and responses
+        # Update triggers
         #
-        trigger = self.add_box(image, trigger_c, trigger_pos, self.box_height_trigger, self.box_width_trigger)
-        response_mask = 1 - mask
+        trigger = self.add_box_image(image, trigger_c, trigger_pos, self.box_height_trigger, self.box_width_trigger)
+        #
+        # Update response masks
+        #
+        if self.response_c == "inverse":
+            response_mask = 1 - mask
+        else:
+            response_pos = self.response_pos if self.response_pos != "random" else random.choice(["top_right", "top_left", "bottom_right", "bottom_left", "center"])
+            response_c = self.response_c if self.response_c != "random" else random.choice(list(COLORS.keys()))
+            response_mask = self.add_box_mask(torch.zeros_like(mask), self.response_c, self.response_pos, self.box_height_response, self.box_width_response)
 
 
         # noise trigger, patch signature
@@ -165,7 +193,60 @@ class OpticDiscSemsegTriggerDataset(Dataset):
         return image, trigger, mask, response_mask
         
             
-    def add_box(self, image: torch.Tensor, color: str, position: str, box_height: int=20, box_width: int=20) -> torch.Tensor:
+    def add_box_mask(self, image: torch.Tensor, color: str, position: str, box_height: int=20, box_width: int=20) -> torch.Tensor:
+        """Add a color box to the image.
+
+        :param image: <placeholder>
+        :type image: torch.Tensor
+        :param color: <placeholder>
+        :type color: str
+        :param position: <placeholder>
+        :type position: str
+        :param box_height: <placeholder>, defaults to 20
+        :type box_height: int, optional
+        :param box_width: <placeholder>, defaults to 20
+        :type box_width: int, optional
+        :raises ValueError: <placeholder>
+        :return: <placeholder>
+        :rtype: torch.Tensor
+        """        
+        #
+        # purple color in RGB
+        #
+        c = torch.tensor(COLORS_MASKS[color])
+        #
+        # assuming images is a batch of images in the shape [batch_size, channels, height, width]
+        #
+        
+        H, W = image.shape
+        #
+        # create a copy of the images to modify
+        #
+        image_with_box = image.clone()
+        #
+        # determine position of the box
+        #
+        if position == 'top_right':
+            start_y, start_x = 0, W - box_width
+        elif position == "top_left":
+            start_y, start_x = 0, 0
+        elif position == "bottom_left":
+            start_y, start_x = H - box_height, 0
+        elif position == "bottom_right":
+            start_y, start_x = H - box_height, W - box_width
+        elif position == "center":
+            start_y, start_x = H//2 - (box_height//2), W//2 - (box_width//2)
+        else:
+            raise ValueError("Unsupported position: {}".format(position))
+        #
+        # Draw the box on each image
+        #
+        image_with_box[start_y:start_y+box_height, start_x:start_x+box_width] = c
+        image_with_box[start_y:start_y+box_height, start_x:start_x+box_width] = c 
+
+        return image_with_box
+
+    def add_box_image(self, image: torch.Tensor, color: str, position: str, box_height: int=20, box_width: int=20) -> torch.Tensor:
         """Add a color box to the image.
 
         :param image: <placeholder>

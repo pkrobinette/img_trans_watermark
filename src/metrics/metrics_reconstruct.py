@@ -109,6 +109,8 @@ def norm_data(data):
     #
     # normlize data
     #
+    if std_data == 0:
+        return None  # Return None to indicate a uniform tensor
     normalized_data = (data - mean_data) / std_data
     return normalized_data
 
@@ -132,6 +134,14 @@ def calc_ncc(data0, data1):
     #
     norm_data0 = norm_data(data0)
     norm_data1 = norm_data(data1)
+    #
+    # Check if both tensors are uniform
+    #
+    if norm_data0 is None and norm_data1 is None:
+        if torch.equal(data0, data1):
+            return 1.0  # Perfect correlation for identical uniform images
+        else:
+            return -1.0  # Completely uncorrelated for different uniform images
     #
     # calculate ncc
     #
