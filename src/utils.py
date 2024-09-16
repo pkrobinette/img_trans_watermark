@@ -23,7 +23,6 @@ from datasets.data_coco_semseg_triggers import COCOSemsegTriggerDataset
 from datasets.data_coco_semseg import COCOSemsegDataset
 from datasets.data_cifar_class import CifarClassDataset
 from datasets.data_optic_disc_semseg_triggers import OpticDiscSemsegTriggerDataset
-from datasets.data_optic_disc_semseg_triggers_v2 import OpticDiscSemsegTriggerDatasetV2
 from datasets.data_optic_disc_semseg import OpticDiscSemsegDataset
 from datetime import datetime
 from torch import utils
@@ -355,7 +354,7 @@ def load_semseg_data(mode, args):
                 mode=mode,
                 num_images=args.num_images,
             )
-        elif args.dataset in ["optic"]:
+        elif args.dataset == "optic":
             dataset = OpticDiscSemsegDataset(
                 path=args.data_path,
                 mode=mode,
@@ -380,7 +379,7 @@ def load_semseg_data(mode, args):
                 steg_trigger=args.steg_trigger,
             )
         elif args.dataset == "optic":
-            dataset = OpticDiscSemsegTriggerDatasetV2(
+            dataset = OpticDiscSemsegTriggerDataset(
                 path=args.data_path,
                 mode=mode,
                 num_images=None,
