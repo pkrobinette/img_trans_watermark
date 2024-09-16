@@ -10,7 +10,7 @@ ATTACK="ftune1"
 EXP="rq5"
 
 echo "${EXP}: ${MODEL} ${DATASET} Semseg -- Attack ${ATTACK}"
-python src/train_pylight_semseg_v2.py \
+python src/train_pylight_semseg.py \
     --trigger_c purple \
     --trigger_pos top_left \
     --trigger_s small \
@@ -32,7 +32,7 @@ python src/train_pylight_semseg_v2.py \
 ATTACK="ftune5"
 
 echo "${EXP}: ${MODEL} ${DATASET} Semseg -- Attack ${ATTACK}"
-python src/train_pylight_semseg_v2.py \
+python src/train_pylight_semseg.py \
     --trigger_c purple \
     --trigger_pos top_left \
     --trigger_s small \
@@ -54,7 +54,7 @@ python src/train_pylight_semseg_v2.py \
 ATTACK="overwrite"
 
 echo "${EXP}: ${MODEL} ${DATASET} Semseg -- Attack ${ATTACK}"
-python src/train_pylight_semseg_v2.py \
+python src/train_pylight_semseg.py \
     --trigger_c purple \
     --trigger_pos top_left \
     --trigger_s small \
