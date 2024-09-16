@@ -1,8 +1,6 @@
-
-
 #! /bin/bash
 
-MODEL="pspnet"
+MODEL="unet"
 BACKBONE="mobilenet_v2"
 DATASET="optic"
 DATA_PATH="RIM-ONE_DL"
