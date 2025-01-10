@@ -1,4 +1,4 @@
-# Trigger-Based Fragile Watermarking for Image Transformation Networks
+# Trigger-Based Fragile Model Watermarking for Image Transformation Networks
 This code is used to train fragile source watermarked models, modify (finetune 1 epoch, finetune 5 epochs, and overwrite) watermarked models, and test the models for target task and watermarking performance.
 
 ## Installation
